@@ -19,6 +19,10 @@ int main(int argc, char* argv[]) {
     );
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     bool is_running = true;
+    SDL_Color fishColour = *new SDL_Color{0, 255, 255};
+    Animatable* fishTest = new Animatable(
+        *new vector<int>{ 40, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 20, 10}, 
+        *new vector<SDL_Color>{fishColour , fishColour , fishColour , fishColour , fishColour , fishColour , fishColour, fishColour , fishColour , fishColour , fishColour , fishColour , fishColour , fishColour, fishColour, fishColour });
 #pragma endregion initialization
 #pragma region mainLoop
 
@@ -26,6 +30,12 @@ int main(int argc, char* argv[]) {
     Uint64 lastFrameTime = 0;
     double deltaTime = 0;
     while (is_running) {
+        fishTest->Update();
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+        fishTest->Render(renderer);
+        SDL_RenderPresent(renderer);
+#pragma region input
         while (SDL_PollEvent(&event)) {
             if ((event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) && event.key.repeat == 0) {
                 switch (event.key.keysym.sym) {
@@ -43,6 +53,7 @@ int main(int argc, char* argv[]) {
                 is_running = false;
             }
         }
+#pragma endregion input
     }
 #pragma endregion mainLoop
 
