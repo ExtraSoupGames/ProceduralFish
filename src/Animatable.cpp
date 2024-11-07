@@ -1,4 +1,15 @@
 #include "Animatable.h"
+Position AnimationElement::MoveElement(int prevX, int prevY, int previousRadius)
+{
+	int a = x - prevX;
+	int b = y - prevY;
+	float distance = sqrt((a * a) + (b * b));
+	float normalisedX = a/ distance;
+	float normalisedY = b / distance;
+	float finalX = prevX + (normalisedX * previousRadius);
+	float finalY = prevY + (normalisedY * previousRadius);
+	return Position{(int)finalX, (int)finalY};
+}
 AnimationElement::AnimationElement(int pRadius, SDL_Color pColour, int positionOffset) {
 	next = nullptr;
 	radius = pRadius;
@@ -9,21 +20,23 @@ AnimationElement::AnimationElement(int pRadius, SDL_Color pColour, int positionO
 void AnimationElement::SetNext(AnimationElement *nextToSet) {
 	next = nextToSet;
 }
-void AnimationElement::UpdatePosition(int prevX, int prevY){
+void AnimationElement::UpdatePosition(int prevX, int prevY, int prevRadius){
 	//update own position based on previous position
-	//TODO
+	Position newPosition = MoveElement(prevX, prevY, prevRadius);
+	x = newPosition.x;
+	y = newPosition.y;
 	//update next element position
 	if (next != nullptr) {
-		next->UpdatePosition(x, y);
+		next->UpdatePosition(x, y, radius);
 	}
 }
-void AnimationElement::Render(SDL_Renderer* renderer, int prevX, int prevY) {
+void AnimationElement::Render(SDL_Renderer* renderer) {
 	//render own element
 	//TODO
 	RenderUtils::DrawCircle(renderer, x, y, radius);
 	//render next element
 	if (next != nullptr) {
-		next->Render(renderer, x, y);
+		next->Render(renderer);
 	}
 }
 Animatable::Animatable(vector<int> radii, vector<SDL_Color> colours) {
@@ -36,9 +49,11 @@ Animatable::Animatable(vector<int> radii, vector<SDL_Color> colours) {
 	}
 #pragma endregion errors
 	//populate a "chain" of animationElement
-	float spacingModifier = 0.8f;
+	float spacingModifier = 1;
 	chainLength = radii.size();
 	int positionOffset = 0;
+	x = 0;
+	y = 0;
 	first = new AnimationElement(radii[0], colours[0], positionOffset);
 	AnimationElement* current = first;
 	AnimationElement* next;
@@ -51,9 +66,14 @@ Animatable::Animatable(vector<int> radii, vector<SDL_Color> colours) {
 	}
 }
 void Animatable::Update() {
-	first->UpdatePosition(0, 0);
+	first->UpdatePosition(x, y, 1);
 }
 void Animatable::Render(SDL_Renderer* renderer) {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	first->Render(renderer, 0, 0);
+	first->Render(renderer);
+}
+void Animatable::MoveTo(int newX, int newY) {
+	x = newX;
+	y = newY;
+	cout << "Moved head to: " << x << " - " << y << endl;
 }

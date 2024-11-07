@@ -37,6 +37,10 @@ int main(int argc, char* argv[]) {
         SDL_RenderPresent(renderer);
 #pragma region input
         while (SDL_PollEvent(&event)) {
+            int* mouseX = new int(5);
+            int* mouseY = new int(5);
+            SDL_GetMouseState(mouseX, mouseY);
+            fishTest->MoveTo(*mouseX, *mouseY);
             if ((event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) && event.key.repeat == 0) {
                 switch (event.key.keysym.sym) {
                 case SDLK_ESCAPE:
@@ -44,6 +48,7 @@ int main(int argc, char* argv[]) {
                     break;
                 case SDLK_p:
                     cout << "P PRESSED" << endl;
+                    break;
                 default:
                     break;
                 }
