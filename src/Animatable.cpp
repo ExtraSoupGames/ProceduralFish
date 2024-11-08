@@ -1,14 +1,14 @@
 #include "Animatable.h"
-Position AnimationElement::MoveElement(int prevX, int prevY, int previousRadius)
+Position AnimationElement::MoveElement(float prevX, float prevY, int previousRadius)
 {
-	int a = x - prevX;
-	int b = y - prevY;
+	float a = x - prevX;
+	float b = y - prevY;
 	float distance = sqrt((a * a) + (b * b));
-	float normalisedX = a/ distance;
+	float normalisedX = a / distance;
 	float normalisedY = b / distance;
 	float finalX = prevX + (normalisedX * previousRadius);
 	float finalY = prevY + (normalisedY * previousRadius);
-	return Position{(int)finalX, (int)finalY};
+	return *new Position{finalX, finalY};
 }
 AnimationElement::AnimationElement(int pRadius, SDL_Color pColour, int positionOffset) {
 	next = nullptr;
@@ -20,7 +20,7 @@ AnimationElement::AnimationElement(int pRadius, SDL_Color pColour, int positionO
 void AnimationElement::SetNext(AnimationElement *nextToSet) {
 	next = nextToSet;
 }
-void AnimationElement::UpdatePosition(int prevX, int prevY, int prevRadius){
+void AnimationElement::UpdatePosition(float prevX, float prevY, int prevRadius){
 	//update own position based on previous position
 	Position newPosition = MoveElement(prevX, prevY, prevRadius);
 	x = newPosition.x;
