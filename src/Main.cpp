@@ -23,6 +23,8 @@ int main(int argc, char* argv[]) {
     Animatable* fishTest = new Animatable(
         *new vector<int>{ 40, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 20, 10}, 
         *new vector<SDL_Color>{fishColour , fishColour , fishColour , fishColour , fishColour , fishColour , fishColour, fishColour , fishColour , fishColour , fishColour , fishColour , fishColour , fishColour, fishColour, fishColour });
+    fishTest->GetElementAt(0)->AddDetail(0, 10, 5, SDL_Color{255, 0, 0, 255});
+    fishTest->GetElementAt(0)->AddDetail(M_PI, 10, 5, SDL_Color{ 255, 0, 0, 255 });
 #pragma endregion initialization
 #pragma region mainLoop
 

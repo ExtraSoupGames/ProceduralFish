@@ -1,14 +1,26 @@
 #include "Animatable.h"
 
 #pragma region DetailElement
+DetailElement::DetailElement(float pAngle, float pDistance, float pRadius, SDL_Color pColour)
+{
+	angle = pAngle;
+	distance = pDistance;
+	radius = pRadius;
+	colour = pColour;
+}
 void DetailElement::Render(SDL_Renderer* renderer, Position connectedElementPos) {
 	Position p = CalculatePosition(connectedElementPos);
+	SDL_SetRenderDrawColor(renderer,colour.r, colour.g, colour.b, colour.a);
 	RenderUtils::DrawCircle(renderer, p.x, p.y, radius);
 }
 Position DetailElement::CalculatePosition(Position connectedElementPos) {
 	//calculate the position in relation to the circle using the parametric equation of a circle
-	float x = radius * (cos(angle));
-	float y = radius * (sin(angle));
+	float newX = distance * (cos(angle));
+	float newY = distance * (sin(angle));
+	newX = connectedElementPos.x + newX;
+	newY = connectedElementPos.y + newY;
+	return Position(newX, newY);
+
 }
 #pragma endregion DetailElement
 
@@ -19,6 +31,11 @@ AnimationElement::AnimationElement(int pRadius, SDL_Color pColour, int positionO
 	colour = pColour;
 	x = 50;
 	y = positionOffset;
+	details = *new vector<DetailElement*>();
+}
+void AnimationElement::AddDetail(float angle, float distance, float radius, SDL_Color pColour)
+{
+	details.push_back(new DetailElement(angle, distance, radius, pColour));
 }
 //constrain this element's position to the previous elements radius
 Position AnimationElement::MoveElement(float prevX, float prevY, int previousRadius)
@@ -36,10 +53,6 @@ Position AnimationElement::MoveElement(float prevX, float prevY, int previousRad
 	float finalY = prevY + (normalisedY * previousRadius);
 	return *new Position{finalX, finalY};
 }
-//set the next element of the chain
-void AnimationElement::SetNext(AnimationElement *nextToSet) {
-	next = nextToSet;
-}
 //passes through the chain updating each element's position
 void AnimationElement::UpdatePosition(float prevX, float prevY, int prevRadius){
 	//update own position based on previous position
@@ -56,18 +69,31 @@ void AnimationElement::Render(SDL_Renderer* renderer) {
 	//render own element
 	SDL_SetRenderDrawColor(renderer, colour.r, colour.g, colour.b, colour.a);
 	RenderUtils::DrawCircle(renderer, x, y, radius);
-	//render details
-	for (DetailElement* d : details) {
-		d->Render(renderer, *new Position(x, y));
-	}
 	//render next element
 	if (next != nullptr) {
 		next->Render(renderer);
 	}
 }
+//render the details of this element, seperated to ensure details are always rendered on top of the body
+void AnimationElement::RenderDetails(SDL_Renderer* renderer)
+{
+	//render details
+	for (DetailElement* d : details) {
+		d->Render(renderer, *new Position(x, y));
+	}
+	//begin next element's detail rendering
+	if (next != nullptr) {
+		next->RenderDetails(renderer);
+	}
+}
+//get the next element in the chain
 AnimationElement* AnimationElement::GetNext()
 {
 	return next;
+}
+//set the next element of the chain
+void AnimationElement::SetNext(AnimationElement* nextToSet) {
+	next = nextToSet;
 }
 #pragma endregion AnimationElement
 
@@ -104,12 +130,12 @@ void Animatable::Update() {
 void Animatable::Render(SDL_Renderer* renderer) {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	first->Render(renderer);
+	first->RenderDetails(renderer);
 }
 //set the position of the head of the creature
 void Animatable::MoveTo(int newX, int newY) {
 	x = newX;
 	y = newY;
-	cout << "Moved head to: " << x << " - " << y << endl;
 }
 AnimationElement* Animatable::GetElementAt(int index)
 {
