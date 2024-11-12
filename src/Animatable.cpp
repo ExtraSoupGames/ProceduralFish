@@ -8,15 +8,15 @@ DetailElement::DetailElement(float pAngle, float pDistance, float pRadius, SDL_C
 	radius = pRadius;
 	colour = pColour;
 }
-void DetailElement::Render(SDL_Renderer* renderer, Position connectedElementPos) {
-	Position p = CalculatePosition(connectedElementPos);
+void DetailElement::Render(SDL_Renderer* renderer, Position connectedElementPos, float baseAngle) {
+	Position p = CalculatePosition(connectedElementPos, baseAngle);
 	SDL_SetRenderDrawColor(renderer,colour.r, colour.g, colour.b, colour.a);
 	RenderUtils::DrawCircle(renderer, p.x, p.y, radius);
 }
-Position DetailElement::CalculatePosition(Position connectedElementPos) {
+Position DetailElement::CalculatePosition(Position connectedElementPos, float baseAngle) {
 	//calculate the position in relation to the circle using the parametric equation of a circle
-	float newX = distance * (cos(angle));
-	float newY = distance * (sin(angle));
+	float newX = distance * (cos(angle + baseAngle));
+	float newY = distance * (sin(angle + baseAngle));
 	newX = connectedElementPos.x + newX;
 	newY = connectedElementPos.y + newY;
 	return Position(newX, newY);
@@ -53,6 +53,11 @@ Position AnimationElement::MoveElement(float prevX, float prevY, int previousRad
 	float finalY = prevY + (normalisedY * previousRadius);
 	return *new Position{finalX, finalY};
 }
+float AnimationElement::CalculateAngle(float prevX, float prevY)
+{
+	float angle = atan2(prevY - y, prevX - x);
+	return angle;
+}
 //passes through the chain updating each element's position
 void AnimationElement::UpdatePosition(float prevX, float prevY, int prevRadius){
 	//update own position based on previous position
@@ -75,15 +80,15 @@ void AnimationElement::Render(SDL_Renderer* renderer) {
 	}
 }
 //render the details of this element, seperated to ensure details are always rendered on top of the body
-void AnimationElement::RenderDetails(SDL_Renderer* renderer)
+void AnimationElement::RenderDetails(SDL_Renderer* renderer, float prevX, float prevY)
 {
 	//render details
 	for (DetailElement* d : details) {
-		d->Render(renderer, *new Position(x, y));
+		d->Render(renderer, *new Position(x, y), CalculateAngle(prevX, prevY));
 	}
 	//begin next element's detail rendering
 	if (next != nullptr) {
-		next->RenderDetails(renderer);
+		next->RenderDetails(renderer, x, y);
 	}
 }
 //get the next element in the chain
@@ -130,7 +135,7 @@ void Animatable::Update() {
 void Animatable::Render(SDL_Renderer* renderer) {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	first->Render(renderer);
-	first->RenderDetails(renderer);
+	first->RenderDetails(renderer, x, y);
 }
 //set the position of the head of the creature
 void Animatable::MoveTo(int newX, int newY) {

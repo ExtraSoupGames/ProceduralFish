@@ -12,6 +12,12 @@ struct Position {
 		x = pX;
 		y = pY;
 	}
+	float GetMagnitude() {
+		return sqrt(x * x + y * y);
+	}
+	float DotProduct(Position other) {
+		return (x * other.x) + (y * other.y);
+	}
 };
 class DetailElement {
 	//angle in relation to the connected element
@@ -24,8 +30,8 @@ class DetailElement {
 	SDL_Color colour;
 public:
 	DetailElement(float pAngle, float pDistance, float pRadius, SDL_Color pColour);
-	void Render(SDL_Renderer* renderer, Position connectedElementPos);
-	Position CalculatePosition(Position connectedElementPos);
+	void Render(SDL_Renderer* renderer, Position connectedElementPos, float baseAngle);
+	Position CalculatePosition(Position connectedElementPos, float baseAngle);
 };
 //one element of a creature, connected by pointers to the next one along
 class AnimationElement {
@@ -42,7 +48,7 @@ public:
 	void AddDetail(float angle, float distance, float radius, SDL_Color pColour);
 	void UpdatePosition(float prevX, float prevY, int prevRadius);
 	void Render(SDL_Renderer* renderer);
-	void RenderDetails(SDL_Renderer* renderer);
+	void RenderDetails(SDL_Renderer* renderer, float prevX, float prevY);
 	void SetNext(AnimationElement* nextToSet);
 	AnimationElement* GetNext();
 };
