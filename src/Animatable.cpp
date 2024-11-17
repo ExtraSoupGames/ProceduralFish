@@ -164,7 +164,9 @@ void Animatable::Update() {
 //render the creature
 void Animatable::Render(SDL_Renderer* renderer) {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	first->Render(renderer);
+	vector<LineData*>* bodyPositions = new vector<LineData*>();
+	first->Render(bodyPositions);
+	RenderUtils::RenderLines(bodyPositions);
 	first->RenderDetails(renderer, x, y);
 }
 //set the position of the head of the creature

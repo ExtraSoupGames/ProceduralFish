@@ -9,3 +9,7 @@ void RenderUtils::DrawCircle(SDL_Renderer* renderer, int centreX, int centreY, i
 		SDL_RenderDrawLine(renderer, (float)centreX + lineLength, i, (float)centreX - lineLength, i);
 	}
 }
+
+void RenderUtils::RenderLines(SDL_Renderer* renderer, vector<LineData*>* lineData)
+{
+}
