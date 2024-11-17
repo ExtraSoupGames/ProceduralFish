@@ -32,13 +32,20 @@ AnimationElement::AnimationElement(int pRadius, SDL_Color pColour, int positionO
 	x = 50;
 	y = positionOffset;
 	details = *new vector<DetailElement*>();
+	angle = 0;
+	angleConstraint = 0.25 * M_PI;
 }
 void AnimationElement::AddDetail(float angle, float distance, float radius, SDL_Color pColour)
 {
 	details.push_back(new DetailElement(angle, distance, radius, pColour));
 }
+float WrapAngle(float angle) {
+	while (angle < 0) angle += 2 * M_PI;
+	while (angle >= 2 * M_PI) angle -= 2 * M_PI;
+	return angle;
+}
 //constrain this element's position to the previous elements radius
-Position AnimationElement::MoveElement(float prevX, float prevY, int previousRadius)
+Position AnimationElement::MoveElement(float prevX, float prevY, int previousRadius, float previousAngle)
 {
 	//calculate vector of previous element to new
 	float a = x - prevX;
@@ -51,22 +58,40 @@ Position AnimationElement::MoveElement(float prevX, float prevY, int previousRad
 	//extend the normalised vector to the radius of the previous element
 	float finalX = prevX + (normalisedX * previousRadius);
 	float finalY = prevY + (normalisedY * previousRadius);
+	// Calculate the angle of the current position
+
+	angle = WrapAngle(CalculateAngle(prevX, prevY));
+	float thisAngle = WrapAngle(CalculateAngle(prevX, prevY));
+	float wrappedPreviousAngle = WrapAngle(previousAngle);
+
+	// Compute angular difference
+	float deltaAngle = WrapAngle(thisAngle - wrappedPreviousAngle);
+	if (deltaAngle > M_PI) deltaAngle -= 2 * M_PI;
+
+	// Apply angle constraint
+	if (abs(deltaAngle) > angleConstraint) {
+		float constrainedAngle = wrappedPreviousAngle + (deltaAngle > 0 ? angleConstraint : -angleConstraint);
+		constrainedAngle = WrapAngle(constrainedAngle);
+		finalX = prevX + (previousRadius * cos(constrainedAngle));
+		finalY = prevY + (previousRadius * sin(constrainedAngle));
+		return Position(finalX, finalY);
+	}
 	return *new Position{finalX, finalY};
 }
 float AnimationElement::CalculateAngle(float prevX, float prevY)
 {
-	float angle = atan2(prevY - y, prevX - x);
-	return angle;
+	float angle = atan2(y - prevY, x - prevX);
+	return WrapAngle(angle);
 }
 //passes through the chain updating each element's position
-void AnimationElement::UpdatePosition(float prevX, float prevY, int prevRadius){
+void AnimationElement::UpdatePosition(float prevX, float prevY, int prevRadius, float previousAngle){
 	//update own position based on previous position
-	Position newPosition = MoveElement(prevX, prevY, prevRadius);
+	Position newPosition = MoveElement(prevX, prevY, prevRadius, previousAngle);
 	x = newPosition.x;
 	y = newPosition.y;
 	//update next element position
 	if (next != nullptr) {
-		next->UpdatePosition(x, y, radius);
+		next->UpdatePosition(x, y, radius, angle);
 	}
 }
 //render the element
@@ -84,7 +109,7 @@ void AnimationElement::RenderDetails(SDL_Renderer* renderer, float prevX, float 
 {
 	//render details
 	for (DetailElement* d : details) {
-		d->Render(renderer, *new Position(x, y), CalculateAngle(prevX, prevY));
+		d->Render(renderer, *new Position(x, y), angle);
 	}
 	//begin next element's detail rendering
 	if (next != nullptr) {
@@ -129,7 +154,7 @@ Animatable::Animatable(vector<int> radii, vector<SDL_Color> colours) {
 }
 //update each element in the body of the creature
 void Animatable::Update() {
-	first->UpdatePosition(x, y, 1);
+	first->UpdatePosition(x, y, 1, 0);
 }
 //render the creature
 void Animatable::Render(SDL_Renderer* renderer) {

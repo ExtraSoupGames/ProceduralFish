@@ -12,11 +12,20 @@ struct Position {
 		x = pX;
 		y = pY;
 	}
+	Position operator-(Position& const other){
+		return Position(x-other.x, y-other.y);
+	}
 	float GetMagnitude() {
 		return sqrt(x * x + y * y);
 	}
 	float DotProduct(Position other) {
 		return (x * other.x) + (y * other.y);
+	}
+	void Rotate(float oldAngle, float newAngle, Position rotateAround) {
+		float distance = (rotateAround - Position(x, y)).GetMagnitude();
+		//new vector is a vector starting at rotateAround, extending distance in newAngle
+		x = rotateAround.x + (distance * cos(newAngle));
+		y = rotateAround.y + (distance * sin(newAngle));
 	}
 };
 class DetailElement {
@@ -39,14 +48,16 @@ class AnimationElement {
 	float x;
 	float y;
 	float radius;
+	float angleConstraint;
+	float angle;
 	SDL_Color colour;
 	vector<DetailElement*> details;
-	Position MoveElement(float prevX, float prevY, int prevRadius);
+	Position MoveElement(float prevX, float prevY, int prevRadius, float previousAngle);
 	float CalculateAngle(float prevX, float prevY);
 public:
 	AnimationElement(int radius, SDL_Color colour, int positionOffset);
 	void AddDetail(float angle, float distance, float radius, SDL_Color pColour);
-	void UpdatePosition(float prevX, float prevY, int prevRadius);
+	void UpdatePosition(float prevX, float prevY, int prevRadius, float previousAngle);
 	void Render(SDL_Renderer* renderer);
 	void RenderDetails(SDL_Renderer* renderer, float prevX, float prevY);
 	void SetNext(AnimationElement* nextToSet);

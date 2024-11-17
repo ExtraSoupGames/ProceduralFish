@@ -9,6 +9,17 @@ int main(int argc, char* argv[]) {
         std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
         return 1;
     }
+
+    SDL_version compiled;
+    SDL_version linked;
+
+    SDL_VERSION(&compiled);
+    SDL_GetVersion(&linked);
+    SDL_Log("We compiled against SDL version %u.%u.%u ...\n",
+        compiled.major, compiled.minor, compiled.patch);
+    SDL_Log("But we are linking against SDL version %u.%u.%u.\n",
+        linked.major, linked.minor, linked.patch);
+
     SDL_Event event;
 
     SDL_Window* window = SDL_CreateWindow(
@@ -21,8 +32,8 @@ int main(int argc, char* argv[]) {
     bool is_running = true;
     SDL_Color fishColour = *new SDL_Color{0, 255, 255};
     Animatable* fishTest = new Animatable(
-        *new vector<int>{ 40, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 20, 10}, 
-        *new vector<SDL_Color>{fishColour , fishColour , fishColour , fishColour , fishColour , fishColour , fishColour, fishColour , fishColour , fishColour , fishColour , fishColour , fishColour , fishColour, fishColour, fishColour });
+        *new vector<int>{ 1, 40, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 20, 10}, 
+        *new vector<SDL_Color>{fishColour, fishColour , fishColour , fishColour , fishColour , fishColour , fishColour , fishColour, fishColour , fishColour , fishColour , fishColour , fishColour , fishColour , fishColour, fishColour, fishColour });
     fishTest->GetElementAt(0)->AddDetail(0.5 * M_PI, 10, 5, SDL_Color{255, 0, 0, 255});
     fishTest->GetElementAt(0)->AddDetail(1.5 * M_PI, 10, 5, SDL_Color{ 255, 0, 0, 255 });
 #pragma endregion initialization
