@@ -57,7 +57,10 @@ class AnimationElement {
 public:
 	AnimationElement(int radius, SDL_Color colour, int positionOffset);
 	void AddDetail(float angle, float distance, float radius, SDL_Color pColour);
+	//passing through the body chain
 	void UpdatePosition(float prevX, float prevY, int prevRadius, float previousAngle);
+	//the initial element has no angle or radius
+	void UpdatePosition(float prevX, float prevY);
 	void Render(SDL_Renderer* renderer);
 	void RenderDetails(SDL_Renderer* renderer, float prevX, float prevY);
 	void SetNext(AnimationElement* nextToSet);

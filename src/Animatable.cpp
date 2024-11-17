@@ -94,6 +94,11 @@ void AnimationElement::UpdatePosition(float prevX, float prevY, int prevRadius, 
 		next->UpdatePosition(x, y, radius, angle);
 	}
 }
+void AnimationElement::UpdatePosition(float prevX, float prevY)
+{
+	float calculatedAngle = CalculateAngle(prevX, prevY);
+	UpdatePosition(prevX, prevY, 5, calculatedAngle);
+}
 //render the element
 void AnimationElement::Render(SDL_Renderer* renderer) {
 	//render own element
@@ -154,7 +159,7 @@ Animatable::Animatable(vector<int> radii, vector<SDL_Color> colours) {
 }
 //update each element in the body of the creature
 void Animatable::Update() {
-	first->UpdatePosition(x, y, 1, 0);
+	first->UpdatePosition(x, y);
 }
 //render the creature
 void Animatable::Render(SDL_Renderer* renderer) {
