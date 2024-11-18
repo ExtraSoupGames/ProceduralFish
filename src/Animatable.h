@@ -38,7 +38,8 @@ public:
 	void UpdatePosition(float prevX, float prevY, int prevRadius, float previousAngle);
 	//the initial element has no angle or radius
 	void UpdatePosition(float prevX, float prevY);
-	void Render(SDL_Renderer* renderer);
+	void Render(vector<LineData*>* lineData);
+	LineData* GetLinePoints();
 	void RenderDetails(SDL_Renderer* renderer, float prevX, float prevY);
 	void SetNext(AnimationElement* nextToSet);
 	AnimationElement* GetNext();
@@ -50,7 +51,7 @@ class Animatable {
 	float x;
 	float y;
 public:
-	Animatable(vector<int> radii, vector<SDL_Color> colours);
+	Animatable(vector<int> radii);
 	void Update();
 	void Render(SDL_Renderer* renderer);
 	void MoveTo(int newX, int newY);

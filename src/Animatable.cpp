@@ -97,17 +97,30 @@ void AnimationElement::UpdatePosition(float prevX, float prevY, int prevRadius, 
 void AnimationElement::UpdatePosition(float prevX, float prevY)
 {
 	float calculatedAngle = CalculateAngle(prevX, prevY);
-	UpdatePosition(prevX, prevY, 5, calculatedAngle);
+	UpdatePosition(prevX, prevY, 1, calculatedAngle);
 }
 //render the element
-void AnimationElement::Render(SDL_Renderer* renderer) {
+void AnimationElement::Render(vector<LineData*>* lineData) {
 	//render own element
-	SDL_SetRenderDrawColor(renderer, colour.r, colour.g, colour.b, colour.a);
-	RenderUtils::DrawCircle(renderer, x, y, radius);
+	lineData->push_back(GetLinePoints());
 	//render next element
 	if (next != nullptr) {
-		next->Render(renderer);
+		next->Render(lineData);
 	}
+}
+LineData* AnimationElement::GetLinePoints() {
+	float offsetX = radius * (cos(angle +  0.5 *M_PI));
+	float offsetY = radius * (sin(angle + 0.5 * M_PI));
+
+	float pos1X = x + offsetX;
+	float pos1Y = y + offsetY;
+
+	offsetX = radius * (cos(angle - 0.5 * M_PI));
+	offsetY = radius * (sin(angle - 0.5 * M_PI));
+
+	float pos2X = x + offsetX;
+	float pos2Y = y + offsetY;
+	return new LineData{Position(pos1X, pos1Y), Position(pos2X, pos2Y)};
 }
 //render the details of this element, seperated to ensure details are always rendered on top of the body
 void AnimationElement::RenderDetails(SDL_Renderer* renderer, float prevX, float prevY)
@@ -133,11 +146,8 @@ void AnimationElement::SetNext(AnimationElement* nextToSet) {
 #pragma endregion AnimationElement
 
 #pragma region Animatable
-Animatable::Animatable(vector<int> radii, vector<SDL_Color> colours) {
+Animatable::Animatable(vector<int> radii) {
 #pragma region errors
-	if (radii.size() != colours.size()) {
-		throw new exception("must input same amount of radii and colours to animatable constructor");
-	}
 	if (radii.size() < 1) {
 		throw new exception("Animatable must have positive integer number of elements");
 	}
@@ -147,11 +157,11 @@ Animatable::Animatable(vector<int> radii, vector<SDL_Color> colours) {
 	//populate a "chain" of animationElement
 	chainLength = radii.size();
 	int positionOffset = 0;
-	first = new AnimationElement(radii[0], colours[0], positionOffset);
+	first = new AnimationElement(radii[0], SDL_Color{255, 255, 255, 255}, positionOffset);
 	AnimationElement* current = first;
 	AnimationElement* next;
 	for (int i = 1; i < chainLength; i++) {
-		next = new AnimationElement(radii[i], colours[i], positionOffset);
+		next = new AnimationElement(radii[i], SDL_Color{255, 255, 255, 255}, positionOffset);
 		positionOffset += radii[i];
 		current->SetNext(next);
 		current = next;
@@ -165,8 +175,9 @@ void Animatable::Update() {
 void Animatable::Render(SDL_Renderer* renderer) {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	vector<LineData*>* bodyPositions = new vector<LineData*>();
+	bodyPositions->push_back(new LineData{ Position{x,y}, Position{x,y} });
 	first->Render(bodyPositions);
-	RenderUtils::RenderLines(bodyPositions);
+	RenderUtils::RenderLines(renderer, bodyPositions);
 	first->RenderDetails(renderer, x, y);
 }
 //set the position of the head of the creature

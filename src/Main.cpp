@@ -32,10 +32,9 @@ int main(int argc, char* argv[]) {
     bool is_running = true;
     SDL_Color fishColour = *new SDL_Color{0, 255, 255};
     Animatable* fishTest = new Animatable(
-        *new vector<int>{ 1, 40, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 20, 10}, 
-        *new vector<SDL_Color>{fishColour, fishColour , fishColour , fishColour , fishColour , fishColour , fishColour , fishColour, fishColour , fishColour , fishColour , fishColour , fishColour , fishColour , fishColour, fishColour, fishColour });
-    fishTest->GetElementAt(0)->AddDetail(0.5 * M_PI, 10, 5, SDL_Color{255, 0, 0, 255});
-    fishTest->GetElementAt(0)->AddDetail(1.5 * M_PI, 10, 5, SDL_Color{ 255, 0, 0, 255 });
+        *new vector<int>{ 5, 10, 20, 40, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30,30, 30,30, 30, 30,  30, 30, 20, 10 });
+    fishTest->GetElementAt(3)->AddDetail(0.5 * M_PI, 10, 5, SDL_Color{255, 0, 0, 255});
+    fishTest->GetElementAt(3)->AddDetail(1.5 * M_PI, 10, 5, SDL_Color{ 255, 0, 0, 255 });
 #pragma endregion initialization
 #pragma region mainLoop
 
