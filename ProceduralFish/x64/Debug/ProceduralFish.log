@@ -1,0 +1,7 @@
+﻿  Main.cpp
+C:\Users\jonny\Desktop\ProceduralFishNew\ProceduralFish\ProceduralFish\RenderUtils.h(12,29): warning C4227: anachronism used: qualifiers on reference are ignored
+  (compiling source file 'Main.cpp')
+  
+C:\Users\jonny\Desktop\ProceduralFishNew\ProceduralFish\ProceduralFish\Main.cpp(36,46): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\jonny\Desktop\ProceduralFishNew\ProceduralFish\ProceduralFish\Main.cpp(37,46): warning C4305: 'argument': truncation from 'double' to 'float'
+  ProceduralFish.vcxproj -> C:\Users\jonny\Desktop\ProceduralFishNew\ProceduralFish\x64\Debug\ProceduralFish.exe
