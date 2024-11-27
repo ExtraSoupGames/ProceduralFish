@@ -131,12 +131,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Animatable.h" />
+    <ClInclude Include="SDL2_gfxPrimitives.h" />
     <ClInclude Include="RenderUtils.h" />
+    <ClInclude Include="SDL2_gfxPrimitives_font.h" />
+    <ClInclude Include="SDL2_rotozoom.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animatable.cpp" />
+    <ClCompile Include="SDL2_gfxPrimitives.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="RenderUtils.cpp" />
+    <ClCompile Include="SDL2_rotozoom.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,5 +1,6 @@
 #pragma once
 #include "SDL.h"
+#include "SDL2_gfxPrimitives.h"
 #include <vector>
 using namespace std;
 struct Position {
@@ -32,5 +33,5 @@ struct LineData {
 class RenderUtils {
 public:
 	static void DrawCircle(SDL_Renderer* renderer, int centreX, int centreY, int radius);
-	static void RenderLines(SDL_Renderer* renderer, vector<LineData*>* lineData);
+	static void RenderBody(SDL_Renderer* renderer, vector<LineData*>* lineData);
 };

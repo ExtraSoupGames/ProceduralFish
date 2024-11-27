@@ -10,17 +10,20 @@ void RenderUtils::DrawCircle(SDL_Renderer* renderer, int centreX, int centreY, i
 	}
 }
 
-void RenderUtils::RenderLines(SDL_Renderer* renderer, vector<LineData*>* lineData)
+void RenderUtils::RenderBody(SDL_Renderer* renderer, vector<LineData*>* lineData)
 {
 	vector<SDL_Point>* points = new vector<SDL_Point>();
 	for (LineData* line : *lineData) {
 		points->push_back(SDL_Point{ (int)line->pos1.x, (int)line->pos1.y });
 		points->insert(points->begin(), SDL_Point{ (int)line->pos2.x, (int)line->pos2.y });
 	}
-	SDL_Point* arrPoints = points->data();
-	SDL_RenderDrawLines(renderer, arrPoints, points->size());
-	SDL_Point firstPoint = *points->begin();
-	SDL_Point lastPoint = *(points->end() - 1);
-	SDL_RenderDrawLine(renderer, firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y);
+	vector<Sint16> xcoords;
+	vector<Sint16> ycoords;
+	for (SDL_Point p : *points) {
+		xcoords.push_back(p.x);
+		ycoords.push_back(p.y);
+	}
+	Uint8 r = 255, g = 0, b = 0, a = 255; // Red color with full opacity
+	GFX_filledPolygonRGBA(renderer, xcoords.data(), ycoords.data(), points->size(), r, g, b, a);
 
 }

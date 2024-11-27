@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="SDLGFX">
+      <UniqueIdentifier>{3ef5608b-56f0-422e-8280-f1b01f5b1561}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animatable.h">
@@ -20,6 +23,15 @@
     </ClInclude>
     <ClInclude Include="RenderUtils.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SDL2_gfxPrimitives.h">
+      <Filter>SDLGFX</Filter>
+    </ClInclude>
+    <ClInclude Include="SDL2_rotozoom.h">
+      <Filter>SDLGFX</Filter>
+    </ClInclude>
+    <ClInclude Include="SDL2_gfxPrimitives_font.h">
+      <Filter>SDLGFX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -31,6 +43,12 @@
     </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SDL2_gfxPrimitives.cpp">
+      <Filter>SDLGFX</Filter>
+    </ClCompile>
+    <ClCompile Include="SDL2_rotozoom.cpp">
+      <Filter>SDLGFX</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
